@@ -1,7 +1,10 @@
 *.bak
+.venv/
 .DS_Store
 ~*.*
 doxyHtml
 doc
 html
 docs/html
+release/
+embedded/**/build/

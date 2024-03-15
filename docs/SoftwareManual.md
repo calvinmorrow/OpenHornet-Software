@@ -1,49 +1,54 @@
 # Software Manual
-
+[TOC]
 This manual is about writing software for the OpenHornet project. It shows how to write, document and test your software.
 
 ## Supported Hardware
 
-- Arduino MEGA
-- Arduino Nano
+- [Arduino MEGA 2560](https://store-usa.arduino.cc/products/arduino-mega-2560-rev3)
+- [Sparkfun Pro-Micro](https://www.sparkfun.com/products/12640)
+- [Arduino Pro-Mini](https://www.adafruit.com/product/2378)
+- [WEMOS S2 mini (ESP32-S2FN4R2)](https://www.wemos.cc/en/latest/s2/s2_mini.html)
 
 ## Prerequisites
 
 - Arduino IDE (with Libraries listed below)
+- GNU Make
 - Local Doxygen installation
-- OpenHornetSandbox access
-
 
 ## Supported Software
 
-- Arduino 1.8.10
-- DCS-bios 0.10.0
+- Arduino IDE 1.8.10+ (Arduino IDE 2.0.0+ preferred)
+- GNU Make 3.81+
+- DCS-BIOS v2.8.7+
 - Doxygen 1.8.13
 
 ### Arduino Libraries
 
-- dcs-bios-arduino-library 0.2.11
+- dcs-bios-arduino-library-0.3.9+
 
+### Suggested debug tools
+
+- Bort v0.2.4+
+- Dcs-Insight v1.8.3+
 
 ## Preparation
 
-The starting point of every new software sketch is the OHSketchTemplate folder. Please copy the whole folder. There are some test.skip files inside there who are needed for the travis-ci testing. Once copied delete the sample function from the OHSketchTemplate.ino. Then change all the \@tags with your own information.
-
+The starting point of every new software sketch is the OHSketchTemplate folder. Please copy the whole folder. There is a Makefile included which defines the target board and libraries needed for your sketch. Once copied delete the sample function from the OHSketchTemplate.ino. Then change all the \@tags with your own information.
 
 ## Sketch naming
 
-The Sketches are named according to the System Architecture drawing found in the OH documentation.
+The Sketches are named according to the reference designator found in the OH-INTERCONNECT document.
 The first part of the name is the OH No. found in the drawing. It is the number beneath the Board type.
 
-e.g: 1A2A for the Master Arm Panel. (Not 1A2A1A).
+e.g: 1A2 for the Master Arm Panel.
 
 The No. is followed by a minus sign "-" (without space). Then the name of the component the sketch is for.
 The name is written in uppercase and with underscores "\_" instead of spaces.
 
-e.g: 1A2A-MASTER_ARM_PANEL for the Master Arm Panel.
+e.g: 1A2-MASTER_ARM_PANEL for the Master Arm Panel.
 
 If the Sketch is for more than one component. Meaning that the board controls more than one component,
-use the name of the first component the sketch is for (the upper most component in the System Architecture drawing).
+use the name of the first component the sketch is for.
 
 
 ## Documenting Software with Doxygen
@@ -51,8 +56,6 @@ use the name of the first component the sketch is for (the upper most component 
 It is imperative that all the code you write is documented. We use doxygen as API documentation generator. So all the comments have to be doxygen compatible. Otherwise they will not show up in the documentation.
 
 We use Javadoc style comment markup. Since it is the easiest to read for humans.
-
-
 
 The following is an example of how to document code:
 
@@ -69,53 +72,27 @@ The following is an example of how to document code:
  *       \____/| .__/ \___|_| |_|_|  |_|\___/|_|  |_| |_|\___|\__|
  *             | |
  *             |_|
+ *   ----------------------------------------------------------------------------------
+ *   Copyright 2016-2024 OpenHornet
  *
+ *   Licensed under the Apache License, Version 2.0 (the "License");
+ *   you may not use this file except in compliance with the License.
+ *   You may obtain a copy of the License at
  *
- *   Project OpenHornet
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- *   The OpenHornet Project is a F/A-18C OFP 13C Lot 20 1:1 Replica Simulator,
- *   consisting of a physical structure and electrical/software interfaces to a PC
- *   to be driven by Digital Combat Simulator (DCS).
- *
- *   ---------------------------------------------------------------------------------
- *
- *   This Project is released under the Creative Commons
- *   Atribution - Non Comercal - Share Alike License.
- *
- *   CC BY-NC-SA 3.0
- *
- *   You are free to:
- *   - Share — copy and redistribute the material in any medium or format
- *   - Adapt — remix, transform, and build upon the material
- *   The licensor cannot revoke these freedoms as long as you follow the license terms.
- *
- *   Under the following terms:
- *   - Attribution — You must give appropriate credit, provide a link to the license,
- *     and indicate if changes were made. You may do so in any reasonable manner,
- *     but not in any way that suggests the licensor endorses you or your use.
- *   - NonCommercial — You may not use the material for commercial purposes.
- *   - ShareAlike — If you remix, transform, or build upon the material,
- *     you must distribute your contributions under the same license as the original.
- *
- *   No additional restrictions — You may not apply legal terms or technological
- *   measures that legally restrict others from doing anything the license permits.
- *
- *   More Information about the license can be found under:
- *   https://creativecommons.org/licenses/by-nc-sa/3.0/
- *
- *   ---------------------------------------------------------------------------------
- *
- *   The OpenHornet Software is based on DCS-BIOS
- *   You can find more information here: http://dcs-bios.a10c.de
- *
- *   DCS-BIOS is released under the following terms:
- *   https://github.com/dcs-bios/dcs-bios/blob/develop/DCS-BIOS-License.txt
- *
- *   ---------------------------------------------------------------------------------
- *
+ *   Unless required by applicable law or agreed to in writing, software
+ *   distributed under the License is distributed on an "AS IS" BASIS,
+ *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *   See the License for the specific language governing permissions and
+ *   limitations under the License.
+ *   ----------------------------------------------------------------------------------
+ *   Note: All other portions of OpenHornet not within the 'OpenHornet-Software' 
+ *   GitHub repository is released under the Creative Commons Attribution - 
+ *   Non-Commercial - Share Alike License. (CC BY-NC-SA 4.0)
+ *   ----------------------------------------------------------------------------------
  *   This Project uses Doxygen as a documentation generator.
- *   Please use Doxigen capable comments.
- *
+ *   Please use Doxygen capable comments.
  **************************************************************************************/
 
 ```
@@ -129,13 +106,24 @@ The Sketch summary comments should be on top of the file, right after the Header
 /**
  * @file OHSketchTemplate.ino
  * @author Balz Reber
- * @date 22.11.2019
- * @version 0.0.1 (untested)
- * @warning This sketch is not yet tested on hardware
- * @brief This is the OpenHornet Sketch Template
+ * @date 02.26.2024
+ * @version u.0.0.1 (untested)
+ * @warning This sketch is based on a wiring diagram, and was not yet tested on hardware
+ * @brief This is the OpenHornet Sketch Template.
  *
- * @details This is the Open Hornet Sketch Template. It should be used as a starting point for every new sketch.
- * Please copy the whole OHSketchTemplate folder to start. As it also contains some test skip files needed for travis.
+ * @details This is the OpenHornet Sketch Template. It should be used as a starting point for every new sketch.
+ * Please copy the whole OHSketchTemplate folder to start, and ensure the correct line in the Makefile is uncommented.
+ * 
+ *  * **Intended Board:**
+ * <Replace with hardware type such as ABSIS ALE, or ABSIS ALE w/ABSIS Relay Module, etc.>
+ * 
+ * **Wiring diagram:**
+ * PIN | Function
+ * --- | ---
+ * 1   | function 1
+ * 2   | function 2
+ * 3   | function 3
+ * 
  */
 ```
 The elements in the summary are the following:
@@ -162,6 +150,11 @@ A brief description of the sketch.
 #### Detail
 A more detailed description of the sketch
 
+#### Intended board
+This is the hardware that this sketch is intended to run on.
+
+#### Wiring diagram
+A quick reference showing connections to this PCB, for ease of reference when reading this code.
 
 ### Functions
 
@@ -230,13 +223,10 @@ int result = 2 * input
 The insides of a function are a black box to doxygen. It is important that you comment the code inside a function nevertheless. This has to be done for other coders who might have to work with your code. Comments inside a function are done with a simple `//` before the comment.
 
 ## Slave ID
-All sketches who run as slave on the RS485 bus have to have a slave ID (DCSBIOS_RS485_SLAVE). That slave ID has to be unique on
-the RS485 bus the sketch runs on. But they can be the same for different buses (Every RS485 master has it's own bus).
-The slave ID is given according to the last number in the sketch number.
+All sketches who run as slave on the RS485 bus have to have a slave ID (DCSBIOS_RS485_SLAVE). That slave ID has to be unique on the RS485 bus the sketch runs on. But they can be the same for different buses (Every RS485 master has it's own bus).
+The slave ID is given according to the BUS ADDR in the interconnect.
 
-e.g 1A2A (Master Arm Panel) has to have the slave ID 2
-e.g 1A4A (L Warning Indicator) has to have the slave ID 4
-
+e.g 1A2A (Master Arm Panel) shall be Bus Address 1
 
 ## Versioning
 The version number consists of three digits.
@@ -254,49 +244,42 @@ Sketches who are untested have to have a leading "u" before the version number a
 
 eg: u.1.4.2 (untested)
 
+## Makefile
+Since the OpenHornet project targets multiple Arduino boards and libraries, the `Makefile` located in each sketch directory is necessary to determine which specific Arduino board and libraries are needed for each component.
+
+`LIBRARIES` is a space-separated list of libraries to include in your sketch.  These must first be added as a [git sub-module](#Git-Submodule) in the `/libraries` folder of the project.  See [Arduino Libraries](#Arduino-Libraries)
+
+The appropriate board Makefile must be included at the end of the file.  Valid options are:
+- ../../include/mega2560.mk (Mega 2560)
+- ../../include/promicro.mk (Sparkfun Pro Micro)
+- ../../include/promini.mk (Sparkfun Pro Mini)
+- ../../include/s2mini.mk (Wemos S2 Mini)
+
+The Makefile will be used by Github Actions to verify that code will compile without errors. Once successful, a downloadable zip file will be created with the compiled firmware which can be flashed to the desired board.
+
 ## Testing your Software
 
 Before you upload anything, please check if your sketch compiles in your Arduino editor. If it does, check if doxygen compiles with your local doxygen installation.
 
-Once those local tests are successfully, upload your sketch to the [OpenHornet Sandbox](https://balzreber.github.io/OpenHornetSandbox/) and see if the [travis-ci](http://www.ravis-ci.org) tests are successful. If they are, your sketch is ready to be uploaded to the [main repo](https://github.com/jrsteensen/OpenHornet).
+Once those local tests are successfully, open a PR to the OpenHornet-Software repo's develop branch and see if the CI/Doxygen tests are successful. If they are, then request your PR to be reviewed.
 
-(The OpenHornet Sandbox should be seen as an extension of local testing.
-Be aware that this is only a Sandbox. Code will not persist there and can be removed at any time.)
+## Github Actions
+Github Actions is a continuous integration testing engine. It is connected with the OpenHornet Github repository. When a Pull request is opened or merged, Github Actions will checkout the git repo and attempt to compile the code. If the code compiles successfully and there where no errors detected, it automatically updates the Doxygen documentation and uploads it back to the repo.
 
-You can get access to the OpenHornet Sandbox by asking Balse (Balse#3320 on Discord).
+## Git Submodules
+The OpenHornet software projects makes use of [git submodules](https://github.blog/2016-02-01-working-with-submodules/) to include and link to other software libraries which are used in Arduino sketches to provide additional functionality.  Most git frontends and tools support git submodules although options differ between each.
 
+- Git for Windows: Ensure that you select the option to "recursively clone submodules" when you clone the repository.
+- Github Desktop: Github Desktop will clone submodules automatically if they exist in the main branch.
 
-## Travis-CI
-Travis CI is a continuous integration testing engine. It is connected with the OpenHornet Sandbox (and with the main repo). If Travis detects a change in the repo, it automatically starts working. Basically it starts a virtual environment, clones the repo into that environment and then tries to compile the code. If the code compiles successfully and there where no errors detected, it automatically updates the Doxygen documentation and uploads it back to the repo.
+## Arduino Libraries
+Arduino Libraries which are included in your sketch need to be added as a (git submodule)[#Git-Submodules] to the repository and then referenced in the Makefile for the sketch. You can find a list of already included libraries in the "Supported Software" section of this manual. If you need another library, please add it using `git submodule add https://github.com/<organization>/<project>.git` under the `/libraries` directory.
 
-Travis uses a Adafruit script to carry out its tests. You can find the script here:
-[Travis-CI-Arduino](https://github.com/adafruit/travis-ci-arduino)
-
-### Tested Platforms
-By default Travis tests the code on the following platforms:
-
-- Arduino UNO (uno)
-- Arduino MEGA (mega)
-- Arduino Zero (zero)
-- Arduino Leonardo (leonardo)
-- ESP8266 (esp8266)
-- ESP32 (esp32)
-- Adafruit Metro M4 (m4)
-
-Since OpenHornet only uses Arduino NANO (same as Arduino UNO for testing) and Arduino MEGA, all other tests should be skipped.
-This is done by including a \*.test.skip file inside the directory the sketch resides. For example: esp8266.test.skip would skip the ESP8266 test. The necessary \*.test.skip files are included in the sketch template folder.
-
-Make sure that you include a uno.test.skip file for sketches who can only run on Arduino MEGA. Like the RS485 bus masters for example.
-
-### Arduino Libraries
-Arduino Libraries who are included in your sketch need to be installed inside travis in order for the tests to work. You find a list of already included libraries in the "Supported Software" section of this manual. If you need anther library installed, ask Balse (Balse#3320 on Discord). He will install the library for you.
-
-
+Libraries are downloaded during each Github Actions run and made available to the sketch when compiling.  Ensure that the libraries are referenced in the Makefile using the same name that they exist in the `/libraries` folder.
 
 ## Resources
 
-- https://learn.adafruit.com/the-well-automated-arduino-library/travis-ci
-- https://github.com/adafruit/travis-ci-arduino
 - http://www.doxygen.org
-- http://www.ravis-ci.org
-- https://github.com/dcs-bios
+- https://github.com/DCS-Skunkworks/dcs-bios
+- https://github.com/DCS-Skunkworks/dcs-bios-arduino-library/tree/327bf2233603c28989de63dc96e17abecf91ed31
+- https://github.blog/2016-02-01-working-with-submodules/
